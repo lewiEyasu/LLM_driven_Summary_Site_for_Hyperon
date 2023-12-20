@@ -4,7 +4,7 @@ import pdfplumber
 
 
 
-path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/book.pdf"
+path = "Data/book.pdf"
 
 def clean (texts):
     clean_text = []
@@ -23,7 +23,7 @@ def chuck_chapters(text, list_pages):
     for index, page in enumerate(list_pages):
         if index < len (list_pages) - 1:
             next_page = list_pages[index + 1]
-            chapters.append(" ".join(text[page: next_page][0]))
+            chapters.append(" ".join([str(item) for item in text[page: next_page]]))
 
     return chapters    
 
@@ -37,3 +37,16 @@ def extract_text(path):
 
     return result
 
+def main():
+    result = extract_text(path)
+    clean_result = clean(result)
+    with open('Data/content.json', 'r') as file:
+        # Load JSON data from the file into a Python object
+        list_pages = json.load(file)
+    
+    chapters = chuck_chapters(clean_result, list(list_pages.values()))
+
+    return chapters
+
+
+print(main())
