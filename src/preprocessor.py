@@ -37,6 +37,16 @@ def extract_text(path):
 
     return result
 
+def save_chapters(text):
+
+    json_file = {}
+    json_file["text"] = text
+    file_path = "./Data/chuck.json"
+
+    # Write JSON data to a file
+    with open(file_path, 'w') as file:
+        json.dump(json_file, file, indent=4)
+
 def main():
     result = extract_text(path)
     clean_result = clean(result)
@@ -45,8 +55,9 @@ def main():
         list_pages = json.load(file)
     
     chapters = chuck_chapters(clean_result, list(list_pages.values()))
+    save_chapters(chapters)
 
-    return chapters
+    # return chapters
 
 
-print(main())
+main()
