@@ -1,3 +1,4 @@
 Data/*
 src/test.ipynb
 .env
+src/__pycache__
