@@ -12,7 +12,7 @@ client = OpenAI(api_key=api_key)
 def get_completion(messages,
                    model,
                    temperature=0,
-                   max_tokens=410):
+                   max_tokens=1000):
     """Generates a completion for the given messages and model.
 
     Args:
@@ -40,4 +40,45 @@ def get_completion(messages,
             return None
     return response.choices[0].message.content
 
+def get_table_content(text):
 
+    messages =  [  
+    {"role": "system",
+      'content':"""Task: Extract the table of contents enclosed by triple quotes from the given book excerpt.
+                   Instructions:
+
+                    1.Locate the section delimited by triple quotes in the book.
+                    2.Identify the table of contents within this section.
+                    3. Record each chapter/unit and its respective page number.
+                    4. Format this information into JSON following this structure:
+                          {
+                            "Chapter 1": 6,
+                            "Chapter 2": 27,
+                            "Chapter 3": 44
+                          }
+                  Ensure the JSON strictly adheres to the specified format, listing chapters/units as keys and their respective page numbers as values."""},    
+    {'role':'user', 
+    'content':f"""{text}"""},  
+    ]
+    # print("hallo ", messages)
+    return  get_completion(messages=messages, model="gpt-4") 
+
+
+
+# {
+#       "chapter 1": 6,
+#       "chapter 2": 27,
+#       "chapter 3": 44,
+#       "chapter 4": 51,
+#       "chapter 5": 65,
+#       "chapter 6": 132,
+#       "chapter 7": 142,
+#       "chapter 8": 149,
+#       "chapter 9": 179,
+#       "chapter 10": 201,
+#       "chapter 11": 238,
+#       "chapter 12": 248,
+#       "chapter 13": 264,
+#       "chapter 14": 277,
+#       "Appendix A": 305
+# }
