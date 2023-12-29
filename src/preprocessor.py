@@ -1,8 +1,8 @@
 
 import json 
-import pdfplumber
+import fitz
 from utility import get_table_content
-start = 1
+start = 0
 
 class Proprocessor:
     def __init__(self, path):
@@ -14,8 +14,9 @@ class Proprocessor:
         clean_text = []
         temp  = ''
         for text in texts:
-            temp = (text[0].replace("-\n", ""))
+            temp = (text.replace("-\n", "").replace("- ", ""))
             temp = (temp.replace("\n", " "))
+
             clean_text.append([temp])
 
         return clean_text   
@@ -33,13 +34,12 @@ class Proprocessor:
 
         return chapters    
 
-    def extract_text(self, path):
-        
+    def extract_text(self):
+
+        doc = fitz.open(self.path)
         result = []
-        with pdfplumber.open(self.path) as pdf:
-                    for page in pdf.pages:
-                        page_text = page.extract_text()
-                        result.append([page_text])
+        for page in doc: # iterate the document pages
+            result.append(page.get_text()) # get plain text encoded as UTF-8
 
         return result
 
@@ -54,7 +54,7 @@ class Proprocessor:
             json.dump(json_file, file, indent=4)
 
     def __call__(self):
-        result = self.extract_text(self.path)
+        result = self.extract_text()
         clean_result = self.clean(result)
         with open('./Data/new_book.json', 'r') as file:
             # Load JSON data from the file into a Python object
@@ -74,6 +74,8 @@ path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyp
 test = Proprocessor(path)
 
 print(test()[0])
+
+
 
 
 
