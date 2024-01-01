@@ -1,8 +1,11 @@
-
+import re
 import json 
 import fitz
 from utility import get_table_content
-start = 0
+import os
+import unicodedata
+
+start = 21
 
 class Proprocessor:
     def __init__(self, path):
@@ -13,10 +16,14 @@ class Proprocessor:
     def clean (self, texts):
         clean_text = []
         temp  = ''
-        for text in texts:
-            temp = (text.replace("-\n", "").replace("- ", ""))
-            temp = (temp.replace("\n", " "))
+    
 
+        for text in texts:
+
+            temp = (str(text).replace("-\n", "").replace("- ", ""))
+            temp = temp.replace("\n", " ")
+            temp = re.sub(r'[^\x20-\x7E]', '', temp)
+            temp =  ''.join(c for c in temp if unicodedata.category(c)[0] != 'C')
             clean_text.append([temp])
 
         return clean_text   
@@ -27,10 +34,12 @@ class Proprocessor:
         
         for index, page in enumerate(list_pages):
           
-            if index < len (list_pages) - 1:
+            if index < len(list_pages)-1:
+                start_page = list_pages[index]
                 next_page = list_pages[index + 1]
                 print(next_page)
-                chapters.append(" ".join([str(item) for item in text[page: next_page]]))
+                chapters.append(" ".join([str(item) for item in text[start_page: next_page]]))
+
 
         return chapters    
 
@@ -42,12 +51,44 @@ class Proprocessor:
             result.append(page.get_text()) # get plain text encoded as UTF-8
 
         return result
+    
+
+    def load_book(self):
+        table_content = []
+        pattern = r"Contents"
+        doc = fitz.open(self.path) 
+        temp_text = [page.get_text()  for index, page in  enumerate(doc) if index <=15]
+
+        for index, page in  enumerate(temp_text): 
+                match = re.search(pattern, page, re.IGNORECASE)
+                
+                if match:
+                    if index+5 <= 14:
+                        end = index + 5
+                        table_content = [page for page in temp_text[index:end]]
+                        
+                    else:  
+                        table_content = [page for page in temp_text[index:]]
+                
+                    
+                    return ' '.join(map(str, table_content))
+
+    def save_content(self, flag= False):
+        file_path = "Data/table_content.json"
+        if flag:
+            json_file = json.loads(get_table_content(self.load_book()))
+            
+            # Write JSON data to a file
+            with open(file_path, 'w') as file:
+                json.dump(json_file, file, indent=4)
+
+        return file_path    
 
     def save_chapters(self, text):
 
         json_file = {}
         json_file["text"] = text
-        file_path = "./Data/new_book.json"
+        file_path = os.path.join("Data/chuck", os.path.basename(self.path).split(".")[0] + ".json")
 
         # Write JSON data to a file
         with open(file_path, 'w') as file:
@@ -56,24 +97,26 @@ class Proprocessor:
     def __call__(self):
         result = self.extract_text()
         clean_result = self.clean(result)
-        with open('./Data/new_book.json', 'r') as file:
+        content_path = self.save_content(True)
+        with open(content_path, 'r') as file:
             # Load JSON data from the file into a Python object
             list_pages = json.load(file)
-            print(list_pages.values())
-            list_pages =  list(map(lambda x: x + start, list(list_pages.values())))
-        
-        chapters = self.chuck_chapters(clean_result, (list_pages))
-        # self.save_chapters(chapters)
+
+        list_pages = list(list_pages.values())
+        print(str(list_pages), "\n\n\n")
+        chapters = self.chuck_chapters(clean_result, list_pages)
+        self.save_chapters(chapters)
 
         return chapters
 
 
 # main()
-path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/(Atlantis Thinking Machines) Ben Goertzel, Nil Geisweiller, Lucio Coelho, Predrag Janii, Cassio Pennachin - Real-World Reasoning_ Toward Scalable, Uncertain Spatiotemporal,  Contextual and Causal Infe.pdf"
-
+path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/resources/(Atlantis Thinking Machines 6) Ben Goertzel, Cassio Pennachin, Nil Geisweiller (auth.) - Engineering General Intelligence, Part 2_ The CogPrime Architecture for Integrative, Embodied AGI-Atlantis Pres.pdf"
 test = Proprocessor(path)
-
+# print(get_table_content(test.load_book()))
 print(test()[0])
+
+
 
 
 
