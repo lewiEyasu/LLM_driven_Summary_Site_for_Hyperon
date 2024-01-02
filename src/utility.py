@@ -64,21 +64,3 @@ def get_table_content(text):
     return  get_completion(messages=messages, model="gpt-4") 
 
 
-
-# {
-#       "chapter 1": 6,
-#       "chapter 2": 27,
-#       "chapter 3": 44,
-#       "chapter 4": 51,
-#       "chapter 5": 65,
-#       "chapter 6": 132,
-#       "chapter 7": 142,
-#       "chapter 8": 149,
-#       "chapter 9": 179,
-#       "chapter 10": 201,
-#       "chapter 11": 238,
-#       "chapter 12": 248,
-#       "chapter 13": 264,
-#       "chapter 14": 277,
-#       "Appendix A": 305
-# }
