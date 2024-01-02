@@ -5,7 +5,7 @@ from utility import get_table_content
 import os
 import unicodedata
 
-start = 21
+start = 0
 
 class Proprocessor:
     def __init__(self, path):
@@ -35,8 +35,8 @@ class Proprocessor:
         for index, page in enumerate(list_pages):
           
             if index < len(list_pages)-1:
-                start_page = list_pages[index]
-                next_page = list_pages[index + 1]
+                start_page = list_pages[index] + start
+                next_page = list_pages[index + 1] + start
                 print(next_page)
                 chapters.append(" ".join([str(item) for item in text[start_page: next_page]]))
 
@@ -57,14 +57,14 @@ class Proprocessor:
         table_content = []
         pattern = r"Contents"
         doc = fitz.open(self.path) 
-        temp_text = [page.get_text()  for index, page in  enumerate(doc) if index <=15]
+        temp_text = [page.get_text()  for index, page in  enumerate(doc) if index <=25]
 
         for index, page in  enumerate(temp_text): 
                 match = re.search(pattern, page, re.IGNORECASE)
                 
                 if match:
-                    if index+5 <= 14:
-                        end = index + 5
+                    if index+9 <= 24:
+                        end = index + 9
                         table_content = [page for page in temp_text[index:end]]
                         
                     else:  
@@ -76,6 +76,7 @@ class Proprocessor:
     def save_content(self, flag= False):
         file_path = "Data/table_content.json"
         if flag:
+            print(get_table_content(self.load_book()))
             json_file = json.loads(get_table_content(self.load_book()))
             
             # Write JSON data to a file
@@ -97,7 +98,7 @@ class Proprocessor:
     def __call__(self):
         result = self.extract_text()
         clean_result = self.clean(result)
-        content_path = self.save_content(True)
+        content_path = self.save_content()
         with open(content_path, 'r') as file:
             # Load JSON data from the file into a Python object
             list_pages = json.load(file)
@@ -111,9 +112,9 @@ class Proprocessor:
 
 
 # main()
-path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/resources/(Atlantis Thinking Machines 6) Ben Goertzel, Cassio Pennachin, Nil Geisweiller (auth.) - Engineering General Intelligence, Part 2_ The CogPrime Architecture for Integrative, Embodied AGI-Atlantis Pres.pdf"
+path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/resources/(Atlantis Thinking Machines 5) Ben Goertzel, Cassio Pennachin, Nil Geisweiller (auth.) - Engineering General Intelligence, Part 1_ A Path to Advanced AGI via Embodied Learning and Cognitive Synergy-At.pdf"
 test = Proprocessor(path)
-# print(get_table_content(test.load_book()))
+#print(get_table_content(test.load_book()))
 print(test()[0])
 
 
