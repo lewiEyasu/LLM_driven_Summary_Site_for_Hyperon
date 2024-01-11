@@ -5,6 +5,8 @@ from utility import get_table_content
 import os
 import unicodedata
 
+
+
 start = 0
 
 class Proprocessor:
@@ -94,6 +96,8 @@ class Proprocessor:
         # Write JSON data to a file
         with open(file_path, 'w') as file:
             json.dump(json_file, file, indent=4)
+
+   
 
     def __call__(self):
         result = self.extract_text()
