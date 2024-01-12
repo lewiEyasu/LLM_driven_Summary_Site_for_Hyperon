@@ -1,8 +1,10 @@
+from typing import Any
 import pandas as pd
 import os
 import tiktoken
 from glob import glob
 from pathlib import Path
+import json
 
 ENCODING = tiktoken.encoding_for_model("gpt-3.5-turbo")
 CHUNK_SIZE = 200  # The target size of each text chunk in tokens
@@ -12,12 +14,12 @@ MAX_NUM_CHUNKS = 300  # The maximum number of chunks to generate from a text
 ENDPAGE_NUM = 282  # the last page number
 
 class Chunk():
-    
+
     def __init__(self):
 
-        self.base_dir = os.path.dirname(
-            os.path.dirname(os.path.realpath(__file__)))
+        self.base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         self.data_dir_path = os.path.join(self.base_dir, "Data/chuck")
+        self.df_total = pd.DataFrame()
 
             
     def get_json_path(self):
@@ -41,7 +43,7 @@ class Chunk():
         book_title = self.get_book_title(path)
         with open(path, "r") as file:
             load_data = json.load(file)
-        chapters = [(f"chater {index}") for index in range(1,len(load_data['text']) + 1)]
+        chapters = [(f"chapter {index}") for index in range(1,len(load_data['text']) + 1)]
         df = pd.DataFrame({'text': (load_data['text']), 'Title': [book_title] * len(load_data['text']), 'Chapters': chapters})
         return df
         
@@ -53,7 +55,7 @@ class Chunk():
             
         
 
-    def get_text_chunks(text: str, chunk_token_size: int = CHUNK_SIZE) -> list[str]:
+    def get_text_chunks(self, text: str, chunk_token_size: int = CHUNK_SIZE) -> list[str]:
         """Splits a text into chunks of ~CHUNK_SIZE tokens, based on punctuation and newline boundaries.
 
         Args:
@@ -116,3 +118,36 @@ class Chunk():
             self.data_dir_path, "dataset.csv"), index=False)
 
 
+    def chuck_df(self, df):
+        temp = []
+        chapter = ''
+        title = ''
+        df_temp= pd.DataFrame()
+        for index, row in df.iterrows():
+        
+            temp = self.get_text_chunks(row.text)
+            chapter = row.Chapters
+            title = row.Title
+            size = len(temp)
+            df_temp = pd.DataFrame({'text': temp, 'Title': [title] * size, 'Chapters': [chapter] * size})
+            self.df_total = pd.concat([self.df_total,  df_temp], ignore_index=True)
+
+          
+        
+    def __call__(self ):
+            paths = self.get_json_path()
+            df = self.collect_data(paths)
+            self.chuck_df(df)
+            self.df_total.to_csv((os.path.join(self.base_dir, "Data","dataset.csv")), index=False)
+            
+        
+
+
+# test_class = Chunk()
+# test_class()
+# test_df = test_class.df_total
+
+# print(test_df.info())
+
+# base = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))        
+# print(os.path.join(base, "/Data/dataset.csv"))
