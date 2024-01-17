@@ -12,7 +12,7 @@ client = OpenAI(api_key=api_key)
 def get_completion(messages,
                    model,
                    temperature=0,
-                   max_tokens=1000):
+                   max_tokens=4000):
     """Generates a completion for the given messages and model.
 
     Args:
