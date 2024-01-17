@@ -20,6 +20,7 @@ class Chunk():
         self.base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
         self.data_dir_path = os.path.join(self.base_dir, "Data/chuck")
         self.df_total = pd.DataFrame()
+        self.dataset_path = (os.path.join(self.base_dir, "Data","dataset.csv"))
 
             
     def get_json_path(self):
@@ -138,7 +139,7 @@ class Chunk():
             paths = self.get_json_path()
             df = self.collect_data(paths)
             self.chuck_df(df)
-            self.df_total.to_csv((os.path.join(self.base_dir, "Data","dataset.csv")), index=False)
+            self.df_total.to_csv(self.dataset_path, index=False)
             
         
 
