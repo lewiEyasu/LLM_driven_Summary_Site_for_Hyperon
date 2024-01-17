@@ -1,7 +1,5 @@
 import os
-from openai import OpenAI
-
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+import openai 
 import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import time
@@ -10,12 +8,12 @@ import ast
 
 
 # Load your API key from an environment variable or secret management service
-load_dotenv(find_dotenv())
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+_ = load_dotenv(find_dotenv())
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-data_dir_path = os.path.join(base_dir, "data")
+base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+data_dir_path = (os.path.join(base_dir, "Data"))
 
 # OpenAI's best embeddings model as of Oct 2023
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -40,15 +38,13 @@ def clean_text(path_text: str = data_dir_path):
     except FileNotFoundError:
         raise FileNotFoundError(
             "CSV file 'dataset.csv' not found in the specified directory.")
+            
 
+    temp_df.drop(temp_df[(temp_df['text'].str.strip() == '') | (temp_df['text'].str.len() < 10)].index, inplace=True)
     # Extract chuck_text column
-    chuck_text = temp_df['chuck_text']
+    chuck_text = pd.Series(temp_df['text'])
 
-    # Evaluate and clean the text
-    cleaned_text = [ast.literal_eval(list_text)
-                    for list_text in chuck_text if list_text]
-
-    return cleaned_text
+    return chuck_text.values
 
 
 def embed_question(question: str):
@@ -61,8 +57,9 @@ def embed_question(question: str):
     Returns:
         np.array: Embedding of the question.
     """
+    
     try:
-        response = client.embeddings.create(model=EMBEDDING_MODEL,
+        response = openai.embeddings.create(model=EMBEDDING_MODEL,
         input=question)
         return np.array(response.data[0].embedding)
     except Exception as e:
@@ -81,19 +78,22 @@ def embed_context(context_list: list):
         np.array: Array of embeddings.
     """
     embeddings = []
-    for batch in context_list:
-        flattened = [item for sublist in batch for item in sublist if sublist]
+    # for index, batch in enumerate(context_list):
+    #     flattened = [item for sublist in batch for item in sublist if sublist]
 
+    for i in range(0, len(context_list), 1000):
+
+        batch = context_list[i:i + 1000]
+        print(f"start")
         try:
-            response = client.embeddings.create(model=EMBEDDING_MODEL,
-            input=flattened)
+            response = openai.embeddings.create(model=EMBEDDING_MODEL,
+            input=list(batch))
             batch_embeddings = [data.embedding for data in response.data]
             embeddings.append(batch_embeddings)
         except Exception as e:
-            print(f"An error occurred: {e}")
-
+            print(f"An error occurred: {e}")  
         time.sleep(10)  # Due to the rate limit imposed by the OpenAI API.
-
+        
     embed = np.array(embeddings, dtype=object)
     return embed
 
@@ -111,3 +111,6 @@ def save_embeddings(data_dir_path=data_dir_path):
     texts = clean_text(data_dir_path)
     embeddings = embed_context(texts)
     np.save(os.path.join(data_dir_path, "embed.npy"), embeddings)
+
+
+# save_embeddings()    
