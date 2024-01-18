@@ -6,3 +6,4 @@ scikit-learn
 openai
 python-dotenv
 PyMuPDF
+fastapi[all]
