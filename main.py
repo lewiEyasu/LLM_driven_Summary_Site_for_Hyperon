@@ -1,31 +1,28 @@
 from fastapi import FastAPI
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 from src.summary import respond_to_context 
 
 from src.utility import handle_response
-# import pandas as pd
 
+app = FastAPI()
 
+origins = ["*"]
 
-
-# origins = ["*"]
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Item(BaseModel):
     title: str
     prompt: str
 
-app = FastAPI()
 
 @app.post("/summary")
 async def get_message(item: Item):

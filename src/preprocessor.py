@@ -115,11 +115,11 @@ class Proprocessor:
         return chapters
 
 
-# main()
-path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/resources/(Atlantis Thinking Machines 5) Ben Goertzel, Cassio Pennachin, Nil Geisweiller (auth.) - Engineering General Intelligence, Part 1_ A Path to Advanced AGI via Embodied Learning and Cognitive Synergy-At.pdf"
-test = Proprocessor(path)
-#print(get_table_content(test.load_book()))
-print(test()[0])
+# # main()
+# path = "/home/lewi/Documents/project/llm_summary/LLM_driven_Summary_Site_for_Hyperon/Data/resources/(Atlantis Thinking Machines 5) Ben Goertzel, Cassio Pennachin, Nil Geisweiller (auth.) - Engineering General Intelligence, Part 1_ A Path to Advanced AGI via Embodied Learning and Cognitive Synergy-At.pdf"
+# test = Proprocessor(path)
+# #print(get_table_content(test.load_book()))
+# print(test()[0])
 
 
 
