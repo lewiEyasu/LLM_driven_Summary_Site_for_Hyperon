@@ -1,4 +1,6 @@
 Data/*
+!Data/dataset.csv
+!Data/embed.npy
 src/test.ipynb
 .env
 src/__pycache__
