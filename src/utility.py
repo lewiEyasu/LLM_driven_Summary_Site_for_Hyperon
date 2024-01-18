@@ -64,3 +64,8 @@ def get_table_content(text):
     return  get_completion(messages=messages, model="gpt-4") 
 
 
+def handle_response(code: int, message: str, data: str) -> dict:
+
+    return {"code": code,
+            "message": message,
+            "data": data}

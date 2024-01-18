@@ -4,7 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import time
 import numpy as np
-import ast
+
 
 
 # Load your API key from an environment variable or secret management service
