@@ -41,3 +41,9 @@ async def get_message(item: Item):
 
     return handle_response(code=200, message="", data=answer)
 
+
+
+title = "From Philosophy to Practice: Understanding the Core Principles of PLN"
+
+result = respond_to_context(title)
+print("From Philosophy to Practice: Understanding the Core Principles of PLN", result)
