@@ -50,10 +50,7 @@ def get_context(dataset, question: str):
     # Compute cosine similarity for each row in the context
     similarity_scores = cosine_similarity(temp, question_embedding)
 
-    # # Get the index of the most similar row
-    # most_similar_index = np.argmax(similarity_scores)
 
-    print( np.argsort(similarity_scores.ravel())[-4:][::-1], similarity_scores.shape)
     # Get the indices of the top 4 most similar rows
     most_similar_indices = np.argsort(similarity_scores.ravel())[-4:][::-1]
 
@@ -61,8 +58,6 @@ def get_context(dataset, question: str):
     for index in most_similar_indices:
         temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 30)   
 
-    # # Get the similarity score for the most similar row
-    # context = sentence_window(DATASET_PATH, int(most_similar_index-1), 20) 
     return temp
 
 
@@ -83,7 +78,7 @@ def respond_to_context(question: str, input_prompt:str = PROMPT_test):
     #     return "Error: No relevant folder found to answer the given question." 
     if not input_prompt:
         input_prompt = PROMPT_test
-        
+
     context =  get_context(dataset=df, question=question)    
     prompt = (
     f"""{input_prompt}\n\n\n
