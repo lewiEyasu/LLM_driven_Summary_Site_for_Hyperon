@@ -50,15 +50,19 @@ def get_context(dataset, question: str):
     # Compute cosine similarity for each row in the context
     similarity_scores = cosine_similarity(temp, question_embedding)
 
+    # Get the index of the most similar row
+    most_similar_index = np.argmax(similarity_scores)
 
-    # Get the indices of the top 4 most similar rows
-    most_similar_indices = np.argsort(similarity_scores.ravel())[-2:][::-1]
+    # # Get the indices of the top 4 most similar rows
+    # most_similar_indices = np.argsort(similarity_scores.ravel())[-2:][::-1]
 
-    temp_result = ""
-    for index in most_similar_indices:
-        temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 20)   
+    # temp_result = ""
+    # for index in most_similar_indices:
+    #     temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 20)   
 
-    return temp
+    # Get the similarity score for the most similar row
+    context = sentence_window(DATASET_PATH, int(most_similar_index-1), 20) 
+    return context
 
 
 def respond_to_context(question: str, input_prompt:str = PROMPT_test):
