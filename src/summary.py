@@ -52,11 +52,11 @@ def get_context(dataset, question: str):
 
 
     # Get the indices of the top 4 most similar rows
-    most_similar_indices = np.argsort(similarity_scores.ravel())[-4:][::-1]
+    most_similar_indices = np.argsort(similarity_scores.ravel())[-3:][::-1]
 
     temp_result = ""
     for index in most_similar_indices:
-        temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 30)   
+        temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 20)   
 
     return temp
 
