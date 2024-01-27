@@ -80,7 +80,10 @@ def respond_to_context(question: str, input_prompt:str = PROMPT_test):
     # relevant_id = retrieve_answer_directory(question) - 1
     #
     # if relevant_id == -1:
-    #     return "Error: No relevant folder found to answer the given question."   
+    #     return "Error: No relevant folder found to answer the given question." 
+    if not input_prompt:
+        input_prompt = PROMPT_test
+        
     context =  get_context(dataset=df, question=question)    
     prompt = (
     f"""{input_prompt}\n\n\n
