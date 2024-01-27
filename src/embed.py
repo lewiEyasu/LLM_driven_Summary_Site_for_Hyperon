@@ -16,7 +16,7 @@ base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 data_dir_path = (os.path.join(base_dir, "Data"))
 
 # OpenAI's best embeddings model as of Oct 2023
-EMBEDDING_MODEL = "text-embedding-ada-002"
+EMBEDDING_MODEL = "text-embedding-3-large"
 
 
 def clean_text(path_text: str = data_dir_path):
@@ -113,4 +113,4 @@ def save_embeddings(data_dir_path=data_dir_path):
     np.save(os.path.join(data_dir_path, "embed.npy"), embeddings)
 
 
-# save_embeddings()    
+

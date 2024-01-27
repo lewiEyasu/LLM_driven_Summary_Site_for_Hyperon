@@ -14,7 +14,7 @@ base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 EMBED_PATH = (os.path.join(base_dir, "Data", "embed.npy"))
 DATASET_PATH = (os.path.join(base_dir, "Data", "dataset.csv"))
 PROMPT = """Write a a wiki page from the given title. use only the information provided from the context. Try to include as many key details as possible."""
-
+PROMPT_test = """Create a comprehensive modern wiki page with the given  title and  based on the provided context. Ensure the page includes relevant information, background details, and organized sections. Pay attention to accuracy, coherence, and clarity in presenting the information. Aim for a well-structured and informative page that aligns with standard wiki formatting and conventions."""
 
 def get_context(dataset, question: str):
     """
@@ -50,15 +50,23 @@ def get_context(dataset, question: str):
     # Compute cosine similarity for each row in the context
     similarity_scores = cosine_similarity(temp, question_embedding)
 
-    # Get the index of the most similar row
-    most_similar_index = np.argmax(similarity_scores)
+    # # Get the index of the most similar row
+    # most_similar_index = np.argmax(similarity_scores)
 
-    # Get the similarity score for the most similar row
-    context = sentence_window(DATASET_PATH, int(most_similar_index-1), 20) 
-    return context
+    print( np.argsort(similarity_scores.ravel())[-4:][::-1], similarity_scores.shape)
+    # Get the indices of the top 4 most similar rows
+    most_similar_indices = np.argsort(similarity_scores.ravel())[-4:][::-1]
+
+    temp_result = ""
+    for index in most_similar_indices:
+        temp_result = temp_result + sentence_window(DATASET_PATH, int(index), 30)   
+
+    # # Get the similarity score for the most similar row
+    # context = sentence_window(DATASET_PATH, int(most_similar_index-1), 20) 
+    return temp
 
 
-def respond_to_context(question: str, input_prompt:str = PROMPT):
+def respond_to_context(question: str, input_prompt:str = PROMPT_test):
     """
     Respond to a given question with relevant context information.
 
@@ -72,9 +80,8 @@ def respond_to_context(question: str, input_prompt:str = PROMPT):
     # relevant_id = retrieve_answer_directory(question) - 1
     #
     # if relevant_id == -1:
-    #     return "Error: No relevant folder found to answer the given question."
-
-    context = get_context(dataset=df, question=question)    
+    #     return "Error: No relevant folder found to answer the given question."   
+    context =  get_context(dataset=df, question=question)    
     prompt = (
     f"""{input_prompt}\n\n\n
     {question}\n\n\n
@@ -86,7 +93,7 @@ def respond_to_context(question: str, input_prompt:str = PROMPT):
         {'role': 'system', 'content': """You excel at following instructions, writing blog and providing the correct answers. """},
         {'role': 'user', 'content': f"{prompt}"}]
 
-    response = get_completion(messages=messages, model="gpt-4-1106-preview", temperature=0)
+    response = get_completion(messages=messages, model="gpt-4-0125-preview", temperature=0)
 
     return response
 

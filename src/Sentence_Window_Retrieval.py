@@ -21,7 +21,6 @@ def sentence_window(path, index, window_size):
 
     try:
         df = pd.read_csv(path)
-        print("true")
     except Exception as err:
         print("can't open the cvs file from the given path\nError message: ", err) 
     else:
@@ -33,7 +32,8 @@ def sentence_window(path, index, window_size):
 
         if window_size < 1:
             raise ValueError("Window size must be at least 1.")
-
+        
+        print(df['text'][index], '\n\n\n')
         start_index = max(0, index - window_size)
         end_index   = min(len(df['text']), index + window_size + 1)
 
