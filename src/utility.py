@@ -4,9 +4,10 @@ from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())  # read local .env file
 
-api_key = os.getenv('OPENAI_API_KEY')
+api_key = os.getenv('OPENAI_SK')
 
 client = OpenAI(api_key=api_key)
+
 
 
 def get_completion(messages,

@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
 import pandas as pd
 from src.summary import respond_to_context 
-
 from src.utility import handle_response
 
 app = FastAPI()
@@ -43,7 +43,7 @@ async def get_message(item: Item):
 
 
 
-title = "From Philosophy to Practice: Understanding the Core Principles of PLN"
+# title = "From Philosophy to Practice: Understanding the Core Principles of PLN"
 
-result = respond_to_context(title)
-print("From Philosophy to Practice: Understanding the Core Principles of PLN", result)
+# result = respond_to_context(title)
+# print("From Philosophy to Practice: Understanding the Core Principles of PLN", result)

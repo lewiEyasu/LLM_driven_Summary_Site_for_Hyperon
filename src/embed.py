@@ -9,7 +9,7 @@ import numpy as np
 
 # Load your API key from an environment variable or secret management service
 _ = load_dotenv(find_dotenv())
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_SK")
 
 
 base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
