@@ -13,6 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 base_dir = (os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 EMBED_PATH = (os.path.join(base_dir, "Data", "embed.npy"))
 DATASET_PATH = (os.path.join(base_dir, "Data", "dataset.csv"))
+print(DATASET_PATH)
 PROMPT = """Write a a wiki page from the given title. use only the information provided from the context. Try to include as many key details as possible."""
 PROMPT_test = """Create a comprehensive modern wiki page with the given  title and  based on the provided context. Ensure the page includes relevant information, background details, and organized sections. Pay attention to accuracy, coherence, and clarity in presenting the information. Aim for a well-structured and informative page that aligns with standard wiki formatting and conventions."""
 
@@ -80,6 +81,7 @@ def respond_to_context(question: str, input_prompt:str = PROMPT_test):
     #
     # if relevant_id == -1:
     #     return "Error: No relevant folder found to answer the given question." 
+    
     if not input_prompt:
         input_prompt = PROMPT_test
 
@@ -95,7 +97,7 @@ def respond_to_context(question: str, input_prompt:str = PROMPT_test):
         {'role': 'system', 'content': """You excel at following instructions, writing blog and providing the correct answers. """},
         {'role': 'user', 'content': f"{prompt}"}]
 
-    response = get_completion(messages=messages, model="gpt-4-0125-preview", temperature=0)
+    response = get_completion(messages=messages, model="gpt-4o", temperature=0)
 
     return response
 
